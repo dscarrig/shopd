@@ -1,0 +1,3 @@
+# No services configured
+# Using external PostgreSQL database
+services: {}
