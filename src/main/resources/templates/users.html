@@ -4,6 +4,12 @@
     <title>User List</title>
 </head>
 <body>
+    <header>
+        <a th:href="@{/}" href="#">Home</a>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out">
+        </form>
+    </header>
     <h1>Users</h1>
     <table>
         <thead>
