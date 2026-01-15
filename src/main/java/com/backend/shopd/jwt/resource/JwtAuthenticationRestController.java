@@ -24,7 +24,7 @@ import com.backend.shopd.jwt.JwtTokenUtil;
 import com.backend.shopd.jwt.JwtUserDetails;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8081"})
 public class JwtAuthenticationRestController
 {
 
@@ -75,9 +75,10 @@ public class JwtAuthenticationRestController
 	}
 
 	@ExceptionHandler({ AuthenticationException.class })
-	public ResponseEntity<String> handleAuthenticationException(AuthenticationException e)
+	public ResponseEntity<?> handleAuthenticationException(AuthenticationException e)
 	{
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+			.body(java.util.Collections.singletonMap("message", e.getMessage()));
 	}
 
 	private void authenticate(String username, String password)

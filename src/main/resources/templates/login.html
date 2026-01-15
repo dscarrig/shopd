@@ -15,11 +15,38 @@
 <div th:if="${param.logout}">
     You have been logged out.
 </div>
-<form th:action="@{/login}" method="post">
-    <div><label>Username: <input type="text" name="username"/></label></div>
-    <div><label>Password: <input type="password" name="password"/></label></div>
+
+<form id="loginForm">
+    <div><label>Username: <input type="text" name="username" id="username"/></label></div>
+    <div><label>Password: <input type="password" name="password" id="password"/></label></div>
     <div><input type="submit" value="Sign In"/></div>
 </form>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('/authenticate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            window.location.href = '/';
+        } else {
+            alert('Invalid credentials');
+        }
+    } catch (error) {
+        alert('Login failed');
+    }
+});
+</script>
 
 </body>
 </html>

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JwtUserDetails implements UserDetails {
 
-    	private static final long serialVersionUID = 5155720064139820502L;
+    private static final long serialVersionUID = 5155720064139820502L;
 
 	private final Long id;
 	private final String username;
