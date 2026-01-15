@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.shopd.jwt.JwtTokenUtil;
 import com.backend.shopd.jwt.JwtUserDetails;
 
-//@RestController
+@RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class JwtAuthenticationRestController
 {

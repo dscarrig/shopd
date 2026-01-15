@@ -1,2 +1,2 @@
 # shopd
-Backend api for handling SHOPD data.
+Backend Spring Boot api with JWT for handling SHOPD data.

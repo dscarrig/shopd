@@ -27,5 +27,7 @@ public class UserEntity {
     @Column(name = "account_type", nullable = false)
     private String accountType;
 
-
+    public String getUserName() {
+        return username;
+    }
 }
