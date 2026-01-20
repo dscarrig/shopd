@@ -6,6 +6,26 @@
 </head>
 <body>
     <h1>ShopD</h1>
+    <div id="userStatus"></div>
     <a th:href="@{/login}" href="#">Login</a>
+    <p></p>
+    <a th:href="@{/create-user}" href="#">Create User</a>
+    <p></p>
+    <a th:href="@{/items}" href="#">View Items</a>
+
+    <script>
+        // Check if user is logged in and display username
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                // Decode JWT token (payload is the middle part between dots)
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const username = payload.sub; // JWT standard claim for username
+                document.getElementById('userStatus').textContent = 'Logged in as ' + username;
+            } catch (e) {
+                console.error('Error decoding token:', e);
+            }
+        }
+    </script>
 </body>
 </html>

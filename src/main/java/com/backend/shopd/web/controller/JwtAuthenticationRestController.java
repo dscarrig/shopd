@@ -1,4 +1,4 @@
-package com.backend.shopd.jwt.resource;
+package com.backend.shopd.web.controller;
 
 import java.util.Objects;
 
@@ -13,15 +13,21 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.backend.shopd.jwt.JwtInMemoryUserDetailsService;
 import com.backend.shopd.jwt.JwtTokenUtil;
 import com.backend.shopd.jwt.JwtUserDetails;
+import com.backend.shopd.jwt.resource.AuthenticationException;
+import com.backend.shopd.jwt.resource.ErrorResponse;
+import com.backend.shopd.jwt.resource.JwtTokenRequest;
+import com.backend.shopd.jwt.resource.JwtTokenResponse;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8081"})
@@ -38,12 +44,16 @@ public class JwtAuthenticationRestController
 	private JwtTokenUtil jwtTokenUtil;
 
 	@Autowired
-	private UserDetailsService jwtInMemoryUserDetailsService;
+	private JwtInMemoryUserDetailsService jwtInMemoryUserDetailsService;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
-			throws AuthenticationException
 	{
+		System.out.println("JwtAuthenticationRestController - createAuthenticationToken for: "
+				+ authenticationRequest.getUsername());
 
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -74,26 +84,60 @@ public class JwtAuthenticationRestController
 		}
 	}
 
-	@ExceptionHandler({ AuthenticationException.class })
-	public ResponseEntity<?> handleAuthenticationException(AuthenticationException e)
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public ResponseEntity<?> registerUser(@RequestBody JwtTokenRequest registrationRequest)
 	{
+		System.out.println("JwtAuthenticationRestController - registerUser for: "
+				+ registrationRequest.getUsername());
+
+		// Check if user already exists
+		if (jwtInMemoryUserDetailsService.userExists(registrationRequest.getUsername()))
+		{
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+					.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+					.body(new ErrorResponse("Username already exists"));
+		}
+
+		// Hash the password before storing
+		String hashedPassword = passwordEncoder.encode(registrationRequest.getPassword());
+
+		// Add user to the system
+		jwtInMemoryUserDetailsService.addUser(registrationRequest.getUsername(), hashedPassword);
+
+		System.out.println("JwtAuthenticationRestController - user registered successfully: "
+				+ registrationRequest.getUsername());
+
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+				.body(new ErrorResponse("User registered successfully"));
+	}
+
+	@ExceptionHandler({ AuthenticationException.class })
+	public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e)
+	{
+		System.out.println("JwtAuthenticationRestController - handleAuthenticationException: " + e.getMessage());
+		ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+		System.out.println("ErrorResponse created with message: " + errorResponse.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-			.body(java.util.Collections.singletonMap("message", e.getMessage()));
+			.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+			.body(errorResponse);
 	}
 
 	private void authenticate(String username, String password)
 	{
+		System.out.println("JwtAuthenticationRestController - authenticate user: " + username);
+
 		Objects.requireNonNull(username);
 		Objects.requireNonNull(password);
 
-		try
-		{
+		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-		} catch (DisabledException e)
-		{
+			System.out.println("JwtAuthenticationRestController - authenticate successful for user: " + username);
+		} catch (DisabledException e) {
+			System.out.println("JwtAuthenticationRestController - authenticate failed - user disabled: " + username);
 			throw new AuthenticationException("USER_DISABLED", e);
-		} catch (BadCredentialsException e)
-		{
+		} catch (BadCredentialsException e) {
+			System.out.println("JwtAuthenticationRestController - authenticate failed - bad credentials: " + username);
 			throw new AuthenticationException("INVALID_CREDENTIALS", e);
 		}
 	}

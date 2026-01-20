@@ -1,0 +1,38 @@
+<!--Test page-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Item List</title>
+</head>
+<body>
+    <header>
+        <a th:href="@{/}" href="#">Home</a>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out">
+        </form>
+    </header>
+    <h1>Items</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Seller</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${shopd_items}">
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.description}"></td>
+                <td th:text="${item.price}"></td>
+                <td th:text="${item.category}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${item.user.username}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -2,13 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>ShopD | Login</title>
+    <title>ShopD | Create User</title>
 </head>
 <body>
 <header>
     <a th:href="@{/}" href="#">Home</a>
 </header>
-<h1>Login to ShopD</h1>
+<h1>Create a New User</h1>
 <div th:if="${param.error}">
     Invalid username and password.
 </div>
@@ -16,27 +16,23 @@
     You have been logged out.
 </div>
 
-<form id="loginForm">
+<form id="createUserForm">
     <div><label>Username: <input type="text" name="username" id="username"/></label></div>
     <div><label>Password: <input type="password" name="password" id="password"/></label></div>
-    <div><input type="submit" value="Sign In"/></div>
+    <div><input type="submit" value="Create User"/></div>
 </form>
 
 <script>
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+document.getElementById('createUserForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const account_type = "USER";
     
     try {
-        const response = await fetch('/authenticate', {
+        const response = await fetch('/register', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ username, password, account_type })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
         });
         
         if (response.ok) {
@@ -44,12 +40,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             localStorage.setItem('token', data.token);
             window.location.href = '/';
         } else {
-            const errorData = await response.json();
-            alert('Login failed: ' + (errorData.message || 'Invalid credentials'));
+            alert('User creation failed');
         }
     } catch (error) {
-        console.error('Login error:', error);
-        alert('Login failed: ' + error.message);
+        alert('User creation failed');
     }
 });
 </script>

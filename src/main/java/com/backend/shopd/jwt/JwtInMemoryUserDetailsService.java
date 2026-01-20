@@ -34,8 +34,12 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		inMemoryUserList.add(new JwtUserDetails(20000L, "temp",
 				"$2a$10$KDLLS2LR6CN70N41MNRvLuE1pYytVd7S3Wf1qFYC8ToS71KLwHrhi", "ROLE_TEMP"));
 		
-		for(int i = 0; i < userList.size(); i++)
-			addUser(userList.get(i).getUserName(), userList.get(i).getPassword());
+		for(int i = 0; i < userList.size(); i++) {
+			// Load existing users into memory WITHOUT saving to database again
+			JwtUserDetails existingUser = new JwtUserDetails(userCount, userList.get(i).getUserName(), userList.get(i).getPassword(), "ROLE_USER");
+			inMemoryUserList.add(existingUser);
+			userCount++;
+		}
     }
 
     public JwtUserDetails addUser(String username, String password)
@@ -52,6 +56,8 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 			UserEntity user = new UserEntity();
 			user.setUsername(username);
 			user.setPassword(password);
+			user.setEmail(username + "@shopd.local"); // Default email if not provided
+			user.setAccountType("USER"); // Set default account type
 			userRepository.save(user);
 			userCount++;
 		} else

@@ -55,10 +55,13 @@ public class JWTWebSecurityConfig {
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.POST, authenticationPath).permitAll()
+						.requestMatchers(HttpMethod.POST, "/register").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/").permitAll()
 						.requestMatchers(HttpMethod.GET, "/login").permitAll()
 						.requestMatchers(HttpMethod.GET, "/index").permitAll()
+						.requestMatchers(HttpMethod.GET, "/create-user").permitAll()
+						.requestMatchers(HttpMethod.GET, "/items").permitAll()
 						.requestMatchers(HttpMethod.POST, "/users/new/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/users/exists/**").permitAll()
 						.anyRequest().authenticated())
