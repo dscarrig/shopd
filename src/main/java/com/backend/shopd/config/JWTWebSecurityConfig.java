@@ -48,7 +48,8 @@ public class JWTWebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception
 	{
-		httpSecurity.csrf(AbstractHttpConfigurer::disable)
+		httpSecurity.cors(cors -> cors.configure(httpSecurity))
+				.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception
 						.authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint))
 				.sessionManagement(session -> session
