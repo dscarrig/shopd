@@ -36,7 +36,7 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		
 		for(int i = 0; i < userList.size(); i++) {
 			// Load existing users into memory WITHOUT saving to database again
-			JwtUserDetails existingUser = new JwtUserDetails(userCount, userList.get(i).getUserName(), userList.get(i).getPassword(), "ROLE_USER");
+			JwtUserDetails existingUser = new JwtUserDetails(userCount, userList.get(i).getUsername(), userList.get(i).getPassword(), "ROLE_USER");
 			inMemoryUserList.add(existingUser);
 			userCount++;
 		}

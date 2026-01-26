@@ -26,6 +26,18 @@ public class UserService {
         return user;
     }
 
+    public UserEntity getUserByUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return user;
+    }
+
+    public UUID getUserIdByUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        return user.getId();
+    }
+
     public UserEntity createUser(UserEntity user) {
         return userRepository.save(user);
     }
@@ -38,11 +50,13 @@ public class UserService {
         UserEntity existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        existingUser.setUsername(updatedUser.getUserName());
+        existingUser.setUsername(updatedUser.getUsername());
         existingUser.setPassword(updatedUser.getPassword());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setAccountType(updatedUser.getAccountType());
 
         return userRepository.save(existingUser);
     }
+
+    
 }
