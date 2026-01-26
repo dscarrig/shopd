@@ -85,7 +85,7 @@ public class CartController {
     public ResponseEntity<ShopdItem> removeCartItem(@PathVariable String user_id, @PathVariable String item_id)
 	{
         try {
-            shopdItemRepository.findById(java.util.UUID.fromString(item_id.toString()))
+            shopdItemRepository.findById(java.util.UUID.fromString(item_id))
                     .orElseThrow(() -> new RuntimeException("Item not found with id: " + item_id));
         } catch (Exception e) {
             return new ResponseEntity<ShopdItem>(HttpStatus.NOT_FOUND);
