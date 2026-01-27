@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,32 +20,59 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
-    static List<JwtUserDetails> inMemoryUserList = new ArrayList<>();
+    private List<JwtUserDetails> inMemoryUserList = new ArrayList<>();
 
     private long userCount;
+    private boolean initialized = false;
 
     public JwtInMemoryUserDetailsService()
 	{
 		userCount = 20001;
 	}
 
+    @PostConstruct
+    public void initializeOnStartup() {
+        initialize();
+    }
+
     public void initialize() {
+        // Only initialize once per service instance
+        if (initialized) {
+            return;
+        }
+        System.out.println("Initializing in-memory user details from database...");
+        inMemoryUserList.clear();
         List<UserEntity> userList = userRepository.findAll();
 		
-		inMemoryUserList.add(new JwtUserDetails(20000L, "temp",
-				"$2a$10$KDLLS2LR6CN70N41MNRvLuE1pYytVd7S3Wf1qFYC8ToS71KLwHrhi", "ROLE_TEMP"));
+		JwtUserDetails tempUser = new JwtUserDetails(20000L, "temp",
+				"$2a$10$KDLLS2LR6CN70N41MNRvLuE1pYytVd7S3Wf1qFYC8ToS71KLwHrhi", "ROLE_TEMP");
+		inMemoryUserList.add(tempUser);
+		System.out.println("JwtUserDetails - created user details for: " + tempUser.getUsername());
+		
+		// Also save temp user to repository if it doesn't exist
+		if (userRepository.findByUsername("temp").isEmpty()) {
+			UserEntity tempUserEntity = new UserEntity();
+			tempUserEntity.setUsername("temp");
+			tempUserEntity.setPassword("$2a$10$KDLLS2LR6CN70N41MNRvLuE1pYytVd7S3Wf1qFYC8ToS71KLwHrhi");
+			tempUserEntity.setEmail("temp@shopd.local");
+			tempUserEntity.setAccountType("TEMP");
+			userRepository.save(tempUserEntity);
+			System.out.println("Saved temp user to repository");
+		}
 		
 		for(int i = 0; i < userList.size(); i++) {
 			// Load existing users into memory WITHOUT saving to database again
 			JwtUserDetails existingUser = new JwtUserDetails(userCount, userList.get(i).getUsername(), userList.get(i).getPassword(), "ROLE_USER");
 			inMemoryUserList.add(existingUser);
+			System.out.println("Added existing user to memory: " + userList.get(i).getUsername());
 			userCount++;
 		}
+		initialized = true;
     }
 
     public JwtUserDetails addUser(String username, String password)
 	{
-		if(inMemoryUserList.size() == 0)
+		if(!initialized)
 			initialize();
 		
 		JwtUserDetails newUser = new JwtUserDetails(userCount, username, password, "ROLE_USER");
@@ -69,8 +97,13 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
     @Override
 	public JwtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException
 	{
-		if(inMemoryUserList.size() == 0)
+		if(!initialized)
 			initialize();
+		
+		System.out.println("Looking for user: " + username + ". In-memory users: " + inMemoryUserList.size());
+		for(JwtUserDetails user : inMemoryUserList) {
+			System.out.println("  - Available user: " + user.getUsername());
+		}
 		
 		Optional<JwtUserDetails> findFirst = inMemoryUserList.stream()
 				.filter(user -> user.getUsername().equals(username)).findFirst();

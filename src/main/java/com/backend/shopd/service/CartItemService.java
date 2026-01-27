@@ -1,4 +1,4 @@
-package com.backend.shopd.web.controller;
+package com.backend.shopd.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.backend.shopd.data.entity.ShopdItem;
 
 @Service
-public class CartItemUtils {
+public class CartItemService {
     private HashMap<String, ArrayList<String>> customerCarts = new HashMap<>();
 	
 	public List<String> getUsersItems(String customer)

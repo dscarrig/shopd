@@ -1,6 +1,10 @@
 package com.backend.shopd.data.entity;
 
+import java.util.List;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,6 +30,18 @@ public class UserEntity {
     private String email;
     @Column(name = "account_type", nullable = false)
     private String accountType;
+    @Column(name = "address_info", nullable = true, columnDefinition = "TEXT")
+    @JdbcType(VarcharJdbcType.class)
+    private List<String> addressInfo;
+    @Column(name = "default_address", nullable = true)
+    private String defaultAddress;
+    @Column(name = "payment_info", nullable = true, columnDefinition = "TEXT")
+    @JdbcType(VarcharJdbcType.class)
+    private List<String> paymentInfo;
+    @Column(name = "default_payment", nullable = true)
+    private String defaultPayment;
+    @Column(name = "phone_number", nullable = true)
+    private String phoneNumber;
 
     public String getUsername() {
         return username;

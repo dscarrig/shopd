@@ -58,5 +58,16 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    
+    public void updateAddress(UUID id, String addressInfo) {
+        UserEntity existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        existingUser.setDefaultAddress(addressInfo);
+        userRepository.save(existingUser);
+    }
+
+    public void deleteAddress(UUID id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteAddress'");
+    }
 }

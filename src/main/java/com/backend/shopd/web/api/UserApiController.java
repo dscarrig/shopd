@@ -15,7 +15,6 @@ import com.backend.shopd.data.entity.UserEntity;
 import com.backend.shopd.service.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
 @RestController
 @RequestMapping("/api/users")
 public class UserApiController {
@@ -57,4 +56,44 @@ public class UserApiController {
     public void deleteUser(@PathVariable UUID id){
         userService.deleteUser(id);
     }
+
+    @PutMapping("/update-address/{id}")
+    public void updateAddress(@PathVariable UUID id, @RequestBody String addressInfo){
+        userService.updateAddress(id, addressInfo);
+    }
+
+    @GetMapping("/account-details/{id}")
+    public String getCurrentAccountDetails(@PathVariable UUID id) {
+        UserEntity user = userService.getUserById(id);
+        return user.getAccountType();
+    }
+
+    @GetMapping("/all-account-details/{id}")
+    public List<String> getAllAccountDetails(@PathVariable UUID id) {
+        UserEntity user = userService.getUserById(id);
+        return user.getAddressInfo();
+    }
+    
+    @GetMapping("/get-address/{id}")
+    public String getAddress(@PathVariable UUID id) {
+        UserEntity user = userService.getUserById(id);
+        return user.getDefaultAddress();
+    }
+    
+    @DeleteMapping("/delete-address/{id}")
+    public void deleteAddress(@PathVariable UUID id) {
+        userService.deleteAddress(id);
+    }
+
+    @DeleteMapping("/delete-account/{id}")
+    public void deleteAccount(@PathVariable UUID id) {
+        userService.deleteUser(id);
+    }
+
+    @PostMapping("/set-new-default-address")
+    public String setDefaultAddress(@RequestBody String entity) {
+        //TODO: process POST request
+        return entity;
+    }
 }
+
