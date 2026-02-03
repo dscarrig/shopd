@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.shopd.data.entity.AddressEntity;
 import com.backend.shopd.data.entity.UserEntity;
 import com.backend.shopd.service.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,27 +58,31 @@ public class UserApiController {
         userService.deleteUser(id);
     }
 
-    @PutMapping("/update-address/{id}")
-    public void updateAddress(@PathVariable UUID id, @RequestBody String addressInfo){
-        userService.updateAddress(id, addressInfo);
+    @PostMapping("/create-new-address/{id}")
+    public void createNewAddress(@PathVariable UUID id, @RequestBody String addressDetails){
+        System.out.println("Creating new address for user ID: " + id + " with details: " + addressDetails);
+        userService.createNewAddress(id, addressDetails);
     }
 
-    @GetMapping("/account-details/{id}")
+    @PutMapping("/update-address/{id}")
+    public void updateAddress(@PathVariable UUID id, @RequestBody UUID addressId){
+        userService.updateDefaultAddress(id, addressId);
+    }
+
+    @GetMapping("/account-type/{id}")
     public String getCurrentAccountDetails(@PathVariable UUID id) {
         UserEntity user = userService.getUserById(id);
         return user.getAccountType();
     }
 
-    @GetMapping("/all-account-details/{id}")
-    public List<String> getAllAccountDetails(@PathVariable UUID id) {
-        UserEntity user = userService.getUserById(id);
-        return user.getAddressInfo();
+    @GetMapping("/all-addresses/{id}")
+    public List<AddressEntity> getAllAddresses(@PathVariable UUID id) {
+        return userService.getAllAddresses(id);
     }
     
-    @GetMapping("/get-address/{id}")
-    public String getAddress(@PathVariable UUID id) {
-        UserEntity user = userService.getUserById(id);
-        return user.getDefaultAddress();
+    @GetMapping("/get-default-address/{id}")
+    public AddressEntity getDefaultAddress(@PathVariable UUID id) {
+        return userService.getDefaultAddress(id);
     }
     
     @DeleteMapping("/delete-address/{id}")
@@ -91,9 +96,7 @@ public class UserApiController {
     }
 
     @PostMapping("/set-new-default-address")
-    public String setDefaultAddress(@RequestBody String entity) {
-        //TODO: process POST request
-        return entity;
+    public void setDefaultAddress(@RequestBody String entity) {
+        userService.updateDefaultAddress(UUID.fromString(entity.split(",")[0]), UUID.fromString(entity.split(",")[1]));
     }
 }
-

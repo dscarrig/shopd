@@ -30,11 +30,6 @@ public class UserEntity {
     private String email;
     @Column(name = "account_type", nullable = false)
     private String accountType;
-    @Column(name = "address_info", nullable = true, columnDefinition = "TEXT")
-    @JdbcType(VarcharJdbcType.class)
-    private List<String> addressInfo;
-    @Column(name = "default_address", nullable = true)
-    private String defaultAddress;
     @Column(name = "payment_info", nullable = true, columnDefinition = "TEXT")
     @JdbcType(VarcharJdbcType.class)
     private List<String> paymentInfo;
