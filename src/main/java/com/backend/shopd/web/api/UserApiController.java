@@ -39,7 +39,6 @@ public class UserApiController {
     @GetMapping("/user-id/{username}")
     public UUID getUserIdByUsername(@PathVariable String username){
         UUID userId = userService.getUserIdByUsername(username);
-        System.out.println("Retrieved user ID: " + userId);
         return userId;
     }
 

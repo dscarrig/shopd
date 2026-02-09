@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.backend.shopd.data.entity.ShopdItem;
 import com.backend.shopd.data.repository.ShopdItemRepository;
 import com.backend.shopd.service.CartItemService;
+import com.backend.shopd.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,9 @@ public class CartApiController {
     
     @Autowired
     private CartItemService cartItemService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ShopdItemRepository shopdItemRepository;
@@ -57,14 +61,19 @@ public class CartApiController {
     }
 
     @PostMapping("/copy/{user_id}")
-    public ResponseEntity<ShopdItem> copyItemsToCart(@PathVariable String user_id, @RequestBody String copyFromUser)
+    public ResponseEntity<ShopdItem> copyItemsToCart(@PathVariable String user_id, @RequestBody String copyFromUserId)
 	{
+        // Check if source cart exists
         try {
-            cartItemService.getUsersItems(copyFromUser);
+            List<String> sourceCart = cartItemService.getUsersItems(copyFromUserId);
+            if (sourceCart == null || sourceCart.isEmpty()) {
+                return new ResponseEntity<ShopdItem>(HttpStatus.OK); // Return OK even if cart is empty
+            }
         } catch (Exception e) {
             return new ResponseEntity<ShopdItem>(HttpStatus.NOT_FOUND);
         }
-		cartItemService.copyCart(copyFromUser, user_id);
+        
+		cartItemService.copyCart(copyFromUserId, user_id);
 		return new ResponseEntity<ShopdItem>(HttpStatus.OK);
 	}
 

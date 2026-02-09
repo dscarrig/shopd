@@ -40,6 +40,16 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
 	{
 		logger.debug("Authentication Request For '{}'", request.getRequestURL());
 
+		// Skip JWT processing for public endpoints
+		String requestPath = request.getRequestURI();
+		if (requestPath.equals("/register") || requestPath.equals("/authenticate") || 
+		    requestPath.startsWith("/users/new/") || requestPath.startsWith("/users/exists/") ||
+		    requestPath.equals("/") || requestPath.equals("/login") || requestPath.equals("/index") || 
+		    requestPath.equals("/create-user") || requestPath.equals("/items") || requestPath.equals("/api/items")) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		final String requestTokenHeader = request.getHeader(this.tokenHeader);
 
 		String username = null;

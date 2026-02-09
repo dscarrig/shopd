@@ -28,8 +28,6 @@ public class CartItemService {
 		
 		currentItems.add(itemId);
 		customerCarts.put(customer, currentItems);
-		
-		System.out.println("Added " + itemId + " item to " + customer);
 	}
 	
 	public void removeItem(String customer, String itemId)
@@ -50,11 +48,12 @@ public class CartItemService {
 		
 		if(customerCarts.containsKey(customer))
 		{
-			System.out.println("Copying from " + customer + " to " + otherCustomer);
 			itemsToCopy = customerCarts.get(customer);
 		}
 		else
+		{
 			itemsToCopy = new ArrayList<String>();
+		}
 		
 		for(int i = 0; i < itemsToCopy.size(); i++)
 			addItem(otherCustomer, itemsToCopy.get(i));
