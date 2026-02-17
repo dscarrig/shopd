@@ -16,12 +16,25 @@ public class PaymentInfoEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "payment_id", updatable = false, nullable = false)
     private String id;
-    @Column(name = "card_number", nullable = false)
-    private String cardNumber;
+    
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+    
+    @Column(name = "payment_token", nullable = false, unique = true)
+    private String paymentToken;
+    
     @Column(name = "card_holder_name", nullable = false)
     private String cardHolderName;
+    
+    @Column(name = "last_four_digits", nullable = false, length = 4)
+    private String lastFourDigits;
+    
     @Column(name = "expiration_date", nullable = false)
     private String expirationDate;
-    @Column(name = "cvv", nullable = false)
-    private String cvv;
+    
+    @Column(name = "card_type")
+    private String cardType; // e.g., "Visa", "Mastercard"
+    
+    // NOTE: CVV is NEVER stored (PCI DSS requirement)
+    // Full card number is NEVER stored (stored securely by payment processor)
 }

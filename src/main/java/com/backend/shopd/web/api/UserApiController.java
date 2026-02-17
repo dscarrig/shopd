@@ -96,6 +96,7 @@ public class UserApiController {
 
     @PostMapping("/set-new-default-address")
     public void setDefaultAddress(@RequestBody String entity) {
+        System.out.println("Setting new default address with data: " + entity);
         userService.updateDefaultAddress(UUID.fromString(entity.split(",")[0]), UUID.fromString(entity.split(",")[1]));
     }
 }
