@@ -35,6 +35,9 @@ public class PaymentInfoEntity {
     @Column(name = "card_type")
     private String cardType; // e.g., "Visa", "Mastercard"
     
+    @Column(name = "is_default", nullable = false)
+    private Boolean isDefault = false;
+    
     // NOTE: CVV is NEVER stored (PCI DSS requirement)
     // Full card number is NEVER stored (stored securely by payment processor)
 }

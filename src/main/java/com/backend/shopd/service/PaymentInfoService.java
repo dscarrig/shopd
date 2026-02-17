@@ -89,6 +89,62 @@ public class PaymentInfoService {
     }
     
     /**
+     * Gets all payment methods for a user.
+     * 
+     * @param userId The user ID
+     * @return List of payment info entities
+     */
+    public java.util.List<PaymentInfoEntity> getAllPaymentInfoByUserId(String userId) {
+        return paymentInfoRepository.findByUserId(userId);
+    }
+    
+    /**
+     * Gets the default payment method for a user.
+     * 
+     * @param userId The user ID
+     * @return The default payment info entity or null if none set
+     */
+    public PaymentInfoEntity getDefaultPaymentInfo(String userId) {
+        return paymentInfoRepository.findByUserIdAndIsDefault(userId, true)
+            .orElse(null);
+    }
+    
+    /**
+     * Deletes a payment method.
+     * 
+     * @param paymentId The payment info ID to delete
+     */
+    @Transactional
+    public void deletePaymentInfo(String paymentId) {
+        paymentInfoRepository.deleteById(paymentId);
+    }
+    
+    /**
+     * Sets a payment method as the default for a user.
+     * Unsets any existing default payment method.
+     * 
+     * @param userId The user ID
+     * @param paymentId The payment info ID to set as default
+     */
+    @Transactional
+    public void setDefaultPaymentInfo(String userId, String paymentId) {
+        // Get all payment methods for the user
+        java.util.List<PaymentInfoEntity> userPayments = paymentInfoRepository.findByUserId(userId);
+        
+        // Set all to not default
+        for (PaymentInfoEntity payment : userPayments) {
+            payment.setIsDefault(false);
+        }
+        paymentInfoRepository.saveAll(userPayments);
+        
+        // Set the specified payment as default
+        PaymentInfoEntity defaultPayment = paymentInfoRepository.findById(paymentId)
+            .orElseThrow(() -> new IllegalArgumentException("Payment info not found with id: " + paymentId));
+        defaultPayment.setIsDefault(true);
+        paymentInfoRepository.save(defaultPayment);
+    }
+    
+    /**
      * Detects the card type from the card number.
      * Basic implementation - can be enhanced with more card types.
      */

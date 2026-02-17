@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.shopd.data.entity.AddressEntity;
+import com.backend.shopd.data.entity.PaymentInfoEntity;
 import com.backend.shopd.data.entity.UserEntity;
+import com.backend.shopd.service.PaymentInfoService;
 import com.backend.shopd.service.UserService;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -21,9 +23,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class UserApiController {
 
     private final UserService userService;
+    private final PaymentInfoService paymentInfoService;
 
-    public UserApiController(UserService userService) {
+    public UserApiController(UserService userService, PaymentInfoService paymentInfoService) {
         this.userService = userService;
+        this.paymentInfoService = paymentInfoService;
     }
     
     @GetMapping
@@ -98,5 +102,83 @@ public class UserApiController {
     public void setDefaultAddress(@RequestBody String entity) {
         System.out.println("Setting new default address with data: " + entity);
         userService.updateDefaultAddress(UUID.fromString(entity.split(",")[0]), UUID.fromString(entity.split(",")[1]));
+    }
+
+    // Payment Info Endpoints
+    
+    @PostMapping("/create-payment-info/{userId}")
+    public PaymentInfoEntity createPaymentInfo(
+            @PathVariable String userId,
+            @RequestBody PaymentInfoRequest request) {
+        System.out.println("Creating new payment info for user ID: " + userId);
+        return paymentInfoService.savePaymentInfo(
+            userId,
+            request.getCardNumber(),
+            request.getCardHolderName(),
+            request.getExpiryDate(),
+            request.getCvv()
+        );
+    }
+
+    @GetMapping("/all-payment-info/{userId}")
+    public List<PaymentInfoEntity> getAllPaymentInfo(@PathVariable String userId) {
+        return paymentInfoService.getAllPaymentInfoByUserId(userId);
+    }
+
+    @GetMapping("/get-default-payment-info/{userId}")
+    public PaymentInfoEntity getDefaultPaymentInfo(@PathVariable String userId) {
+        return paymentInfoService.getDefaultPaymentInfo(userId);
+    }
+
+    @DeleteMapping("/delete-payment-info/{paymentId}")
+    public void deletePaymentInfo(@PathVariable String paymentId) {
+        paymentInfoService.deletePaymentInfo(paymentId);
+    }
+
+    @PutMapping("/set-default-payment")
+    public void setDefaultPayment(@RequestBody String entity) {
+        System.out.println("Setting new default payment with data: " + entity);
+        String[] parts = entity.split(",");
+        paymentInfoService.setDefaultPaymentInfo(parts[0], parts[1]);
+    }
+
+    // Inner class for payment info request
+    public static class PaymentInfoRequest {
+        private String cardNumber;
+        private String cardHolderName;
+        private String expiryDate;
+        private String cvv;
+
+        public String getCardNumber() {
+            return cardNumber;
+        }
+
+        public void setCardNumber(String cardNumber) {
+            this.cardNumber = cardNumber;
+        }
+
+        public String getCardHolderName() {
+            return cardHolderName;
+        }
+
+        public void setCardHolderName(String cardHolderName) {
+            this.cardHolderName = cardHolderName;
+        }
+
+        public String getExpiryDate() {
+            return expiryDate;
+        }
+
+        public void setExpiryDate(String expiryDate) {
+            this.expiryDate = expiryDate;
+        }
+
+        public String getCvv() {
+            return cvv;
+        }
+
+        public void setCvv(String cvv) {
+            this.cvv = cvv;
+        }
     }
 }
