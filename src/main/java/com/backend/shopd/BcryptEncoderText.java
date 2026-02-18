@@ -9,7 +9,7 @@ public class BcryptEncoderText
 	{
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		String encodedString = encoder.encode("password");
+		String encodedString = encoder.encode("temp");
 		System.out.println(encodedString);
 	}
 

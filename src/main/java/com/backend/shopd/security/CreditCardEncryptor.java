@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * JPA AttributeConverter that automatically encrypts/decrypts credit card numbers
  * when saving to and reading from the database
  */
-@Converter(autoApply = true)
+@Converter(autoApply = false)
 @Component
 public class CreditCardEncryptor implements AttributeConverter<String, String> {
 
