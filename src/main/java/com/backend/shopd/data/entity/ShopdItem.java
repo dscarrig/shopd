@@ -2,6 +2,8 @@ package com.backend.shopd.data.entity;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ public class ShopdItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "item_id", updatable = false, nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
     @Column(name = "name", nullable = false)
     private String name;

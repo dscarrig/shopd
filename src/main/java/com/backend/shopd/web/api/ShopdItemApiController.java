@@ -3,6 +3,8 @@ package com.backend.shopd.web.api;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import com.backend.shopd.service.ShopdItemService;
 @RestController
 @RequestMapping("/api/items")
 public class ShopdItemApiController {
+    private static final Logger logger = LoggerFactory.getLogger(ShopdItemApiController.class);
     private final ShopdItemService shopdItemService;
 
     public ShopdItemApiController(ShopdItemService shopdItemService) {
@@ -34,9 +37,12 @@ public class ShopdItemApiController {
         return shopdItemService.getItemById(id);
     }
 
-    @PostMapping
-    public ShopdItem createItem(@RequestBody ShopdItem item){
-        return shopdItemService.createItem(item);
+    @PostMapping("/create-item/{user_id}")
+    public ShopdItem createItem(@PathVariable UUID user_id, @RequestBody ShopdItem item){
+        logger.info("Creating item '{}' for user: {}", item.getName(), user_id);
+        ShopdItem createdItem = shopdItemService.createItem(item);
+        logger.info("Item created successfully with ID: {}", createdItem.getId());
+        return createdItem;
     }
 
     @PutMapping("/{id}")

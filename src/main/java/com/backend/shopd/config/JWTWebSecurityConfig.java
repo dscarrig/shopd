@@ -67,6 +67,7 @@ public class JWTWebSecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/items").permitAll()
 						.requestMatchers(HttpMethod.POST, "/users/new/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/users/exists/**").permitAll()
+						.requestMatchers("/error").permitAll()
 						.anyRequest().authenticated())
 				.headers(headers -> headers
 					.frameOptions(frame -> frame.sameOrigin())); // H2 Console Needs this setting
