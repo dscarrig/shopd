@@ -39,8 +39,6 @@ public class CartApiController {
     @PostMapping("/add/{user_id}")
     public ResponseEntity<ShopdItem> addItemToCart(@PathVariable String user_id, @RequestBody String itemId)
 	{
-        System.out.println("Adding item " + itemId + " to user " + user_id + " cart.");
-        
         try {
             java.util.UUID uuid = java.util.UUID.fromString(itemId);
             System.out.println("Parsed UUID: " + uuid);

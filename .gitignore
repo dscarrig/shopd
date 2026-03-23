@@ -4,6 +4,8 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+test-image.png
+GCS_SETUP.md
 
 ### STS ###
 .apt_generated
@@ -32,3 +34,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Google Cloud Storage ###
+shopd-gcs-key.json
+*-key.json
+gcp-credentials.json

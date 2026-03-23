@@ -100,7 +100,6 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		if(!initialized)
 			initialize();
 		
-		System.out.println("Looking for user: " + username + ". In-memory users: " + inMemoryUserList.size());
 		for(JwtUserDetails user : inMemoryUserList) {
 			System.out.println("  - Available user: " + user.getUsername());
 		}
