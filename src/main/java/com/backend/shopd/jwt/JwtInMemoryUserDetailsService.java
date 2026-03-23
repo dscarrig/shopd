@@ -100,10 +100,6 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		if(!initialized)
 			initialize();
 		
-		for(JwtUserDetails user : inMemoryUserList) {
-			System.out.println("  - Available user: " + user.getUsername());
-		}
-		
 		Optional<JwtUserDetails> findFirst = inMemoryUserList.stream()
 				.filter(user -> user.getUsername().equals(username)).findFirst();
 
