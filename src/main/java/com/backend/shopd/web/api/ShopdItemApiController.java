@@ -66,8 +66,9 @@ public class ShopdItemApiController {
         return createdItem;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update-item/{id}")
     public ShopdItem updateItem(@PathVariable UUID id, @RequestBody ShopdItem item){
+        System.out.println("Updating item with ID: " + id);
         return shopdItemService.updateItem(id, item);
     }
 
