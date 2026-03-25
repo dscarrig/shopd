@@ -47,6 +47,12 @@ public class ShopdItemApiController {
         return shopdItemService.getAllItems();
     }
 
+    @GetMapping("/get-all-items-from-user/{user_id}")
+    public List<ShopdItem> getAllItemsFromUser(@PathVariable UUID user_id){
+        System.out.println("Fetching items for user: " + user_id);
+        return shopdItemService.getItemsByUserId(user_id);
+    }
+
     @GetMapping("/{id}")
     public ShopdItem getItemById(@PathVariable UUID id){
         return shopdItemService.getItemById(id);
@@ -65,8 +71,9 @@ public class ShopdItemApiController {
         return shopdItemService.updateItem(id, item);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable UUID id){
+    @DeleteMapping("/{user_id}/{id}")
+    public void deleteItem(@PathVariable UUID user_id, @PathVariable UUID id){
+
         shopdItemService.deleteItem(id);
     }
 

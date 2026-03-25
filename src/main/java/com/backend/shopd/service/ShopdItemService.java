@@ -20,6 +20,10 @@ public class ShopdItemService {
         return shopdItemRepository.findAll();
     }
 
+    public List<ShopdItem> getItemsByUserId(UUID userId) {
+        return shopdItemRepository.findByUserId(userId);
+    }
+
     public ShopdItem getItemById(UUID id) {
         ShopdItem item = shopdItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));

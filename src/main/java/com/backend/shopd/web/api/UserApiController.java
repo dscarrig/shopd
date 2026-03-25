@@ -47,6 +47,13 @@ public class UserApiController {
         return userId;
     }
 
+    @GetMapping("/username/{id}")
+    public String getUsernameById(@PathVariable UUID id){
+        String username = userService.getUsernameById(id);
+        System.out.println("Retrieved username for user ID '" + id + "': " + username);
+        return username;
+    }
+
     @PostMapping
     public UserEntity createUser(@RequestBody UserEntity user){
         return userService.createUser(user);

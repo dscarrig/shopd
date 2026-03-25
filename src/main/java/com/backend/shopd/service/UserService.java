@@ -149,4 +149,10 @@ public class UserService {
             throw new RuntimeException("Failed to parse address details: " + e.getMessage(), e);
         }
     }
+
+    public String getUsernameById(UUID id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        return user.getUsername();
+    }
 }
