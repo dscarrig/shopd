@@ -49,7 +49,6 @@ public class ShopdItemApiController {
 
     @GetMapping("/get-all-items-from-user/{user_id}")
     public List<ShopdItem> getAllItemsFromUser(@PathVariable UUID user_id){
-        System.out.println("Fetching items for user: " + user_id);
         return shopdItemService.getItemsByUserId(user_id);
     }
 

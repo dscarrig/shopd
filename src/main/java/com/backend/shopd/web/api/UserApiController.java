@@ -43,14 +43,12 @@ public class UserApiController {
     @GetMapping("/user-id/{username}")
     public UUID getUserIdByUsername(@PathVariable String username){
         UUID userId = userService.getUserIdByUsername(username);
-        System.out.println("Retrieved user ID for username '" + username + "': " + userId);
         return userId;
     }
 
     @GetMapping("/username/{id}")
     public String getUsernameById(@PathVariable UUID id){
         String username = userService.getUsernameById(id);
-        System.out.println("Retrieved username for user ID '" + id + "': " + username);
         return username;
     }
 
@@ -71,7 +69,6 @@ public class UserApiController {
 
     @PostMapping("/create-new-address/{id}")
     public void createNewAddress(@PathVariable UUID id, @RequestBody String addressDetails){
-        System.out.println("Creating new address for user ID: " + id + " with details: " + addressDetails);
         userService.createNewAddress(id, addressDetails);
     }
 
@@ -108,7 +105,6 @@ public class UserApiController {
 
     @PostMapping("/set-new-default-address")
     public void setDefaultAddress(@RequestBody String entity) {
-        System.out.println("Setting new default address with data: " + entity);
         userService.updateDefaultAddress(UUID.fromString(entity.split(",")[0]), UUID.fromString(entity.split(",")[1]));
     }
 
@@ -118,14 +114,21 @@ public class UserApiController {
     public PaymentInfoEntity createPaymentInfo(
             @PathVariable String userId,
             @RequestBody PaymentInfoRequest request) {
-        System.out.println("Creating new payment info for user ID: " + userId);
-        return paymentInfoService.savePaymentInfo(
+        PaymentInfoEntity savedPaymentInfo = paymentInfoService.savePaymentInfo(
             userId,
             request.getCardNumber(),
             request.getCardHolderName(),
             request.getExpiryDate(),
             request.getCvv()
         );
+        
+        // If this is the first payment info for the user, set it as default
+        List<PaymentInfoEntity> allPaymentInfo = paymentInfoService.getAllPaymentInfoByUserId(userId);
+        if (allPaymentInfo.size() == 1) {
+            paymentInfoService.setDefaultPaymentInfo(userId, savedPaymentInfo.getId());
+        }
+        
+        return savedPaymentInfo;
     }
 
     @GetMapping("/all-payment-info/{userId}")
@@ -145,7 +148,6 @@ public class UserApiController {
 
     @PutMapping("/set-default-payment")
     public void setDefaultPayment(@RequestBody String entity) {
-        System.out.println("Setting new default payment with data: " + entity);
         String[] parts = entity.split(",");
         paymentInfoService.setDefaultPaymentInfo(parts[0], parts[1]);
     }
