@@ -89,7 +89,6 @@ public class UserService {
     }
 
     public AddressEntity getDefaultAddress(UUID id) {
-        System.out.println("Fetching default address for user ID: " + id);
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -130,6 +129,7 @@ public class UserService {
             // If this is the first address for the user, make it default
             List<AddressEntity> existingAddresses = addressRepository.findByUser(user);
             if (existingAddresses.isEmpty()) {
+                System.out.println("No existing addresses found for user ID: " + userId + ". Setting new address as default.");
                 newAddress.setIsDefault(true);
             } else if (newAddress.getIsDefault() == null) {
                 newAddress.setIsDefault(false);
@@ -137,6 +137,7 @@ public class UserService {
             
             // If the new address is marked as default, unset any existing default
             if (Boolean.TRUE.equals(newAddress.getIsDefault())) {
+                System.out.println("New address is marked as default for user ID: " + userId + ". Unsetting existing default addresses.");
                 for (AddressEntity address : existingAddresses) {
                     address.setIsDefault(false);
                 }

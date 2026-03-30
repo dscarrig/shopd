@@ -103,9 +103,9 @@ public class UserApiController {
         userService.deleteUser(id);
     }
 
-    @PostMapping("/set-new-default-address")
-    public void setDefaultAddress(@RequestBody String entity) {
-        userService.updateDefaultAddress(UUID.fromString(entity.split(",")[0]), UUID.fromString(entity.split(",")[1]));
+    @PostMapping("/set-new-default-address/{userId}")
+    public void setDefaultAddress(@PathVariable UUID userId, @RequestBody String entity) {
+        userService.updateDefaultAddress(userId, UUID.fromString(entity));
     }
 
     // Payment Info Endpoints

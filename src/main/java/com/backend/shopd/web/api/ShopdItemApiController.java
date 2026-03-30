@@ -52,6 +52,11 @@ public class ShopdItemApiController {
         return shopdItemService.getItemsByUserId(user_id);
     }
 
+    @GetMapping("/search-by-category")
+    public List<ShopdItem> getItemsByCategory(@RequestParam String[] categories){
+        return shopdItemService.getItemsByCategory(categories);
+    }
+
     @GetMapping("/{id}")
     public ShopdItem getItemById(@PathVariable UUID id){
         return shopdItemService.getItemById(id);

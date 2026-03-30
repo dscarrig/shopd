@@ -41,15 +41,12 @@ public class CartApiController {
 	{
         try {
             java.util.UUID uuid = java.util.UUID.fromString(itemId);
-            System.out.println("Parsed UUID: " + uuid);
             
             shopdItemRepository.findById(uuid)
                     .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid UUID format: " + itemId);
             return new ResponseEntity<ShopdItem>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            System.out.println("Item not found in database: " + itemId);
             return new ResponseEntity<ShopdItem>(HttpStatus.NOT_FOUND);
         }
         

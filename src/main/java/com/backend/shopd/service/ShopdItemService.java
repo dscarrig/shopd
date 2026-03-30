@@ -53,4 +53,8 @@ public class ShopdItemService {
 
         return shopdItemRepository.save(existingItem);
     }
+
+    public List<ShopdItem> getItemsByCategory(String[] categories) {
+        return shopdItemRepository.findByCategoryIn(categories);
+    }
 }

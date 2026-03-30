@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShopdItemRepository extends JpaRepository<ShopdItem, UUID> {
     List<ShopdItem> findByUserId(UUID userId);
+
+    List<ShopdItem> findByCategoryIn(String[] categories);
 }
