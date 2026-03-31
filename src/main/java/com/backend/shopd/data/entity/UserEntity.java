@@ -41,5 +41,6 @@ public class UserEntity {
     public String getUsername() {
         return username;
     }
+
 }
 

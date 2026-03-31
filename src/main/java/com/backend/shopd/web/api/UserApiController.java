@@ -52,6 +52,11 @@ public class UserApiController {
         return username;
     }
 
+    @GetMapping("/with-listings")
+    public List<UserEntity> getAllUsersWithListings(){
+        return userService.getAllUsersWithListings();
+    }
+
     @PostMapping
     public UserEntity createUser(@RequestBody UserEntity user){
         return userService.createUser(user);
