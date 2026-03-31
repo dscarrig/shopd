@@ -98,9 +98,9 @@ public class UserApiController {
         return userService.getDefaultAddress(id);
     }
     
-    @DeleteMapping("/delete-address/{id}")
-    public void deleteAddress(@PathVariable UUID id) {
-        userService.deleteAddress(id);
+    @DeleteMapping("/delete-address/{addressId}")
+    public void deleteAddress(@PathVariable UUID addressId) {
+        userService.deleteAddress(addressId);
     }
 
     @DeleteMapping("/delete-account/{id}")

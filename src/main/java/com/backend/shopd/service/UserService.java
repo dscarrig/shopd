@@ -84,8 +84,11 @@ public class UserService {
         addressRepository.save(defaultAddress);
     }
 
-    public void deleteAddress(UUID id) {
-        addressRepository.deleteById(id);
+    public void deleteAddress(UUID addressId) {
+        AddressEntity address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found with id: " + addressId));
+
+        addressRepository.delete(address);
     }
 
     public AddressEntity getDefaultAddress(UUID id) {
