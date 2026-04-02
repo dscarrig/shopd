@@ -1,5 +1,7 @@
 package com.backend.shopd.data.entity;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +36,9 @@ public class PaymentInfoEntity {
     
     @Column(name = "card_type")
     private String cardType; // e.g., "Visa", "Mastercard"
+
+    @Column(name = "billing_address_id")
+    private UUID billingAddressId; // Reference to AddressEntity for billing address
     
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault = false;
