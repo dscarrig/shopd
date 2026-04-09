@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.backend.shopd.data.entity.OrderEntity;
 import com.backend.shopd.data.entity.UserItemPurchase;
 import com.backend.shopd.service.PurchaseService;
 
@@ -47,13 +48,21 @@ public class PurchaseApiController {
     }
 
     /**
-     * GET /api/purchases/user/{user_id}
+     * GET /api/purchases/user/purchases/{user_id}
      * Returns full purchase history for a user, newest first.
      */
     @GetMapping("/user/{user_id}")
     public List<UserItemPurchase> getPurchasesByUser(@PathVariable UUID user_id) {
+        System.out.println("Received request for purchase history of user: " + user_id);
         return purchaseService.getPurchasesByUser(user_id);
     }
+
+    @GetMapping("/user/orders/{user_id}")
+    public List<OrderEntity> getOrdersByUser(@PathVariable UUID user_id) {
+        System.out.println("Received request for orders of user: " + user_id);
+        return purchaseService.getOrdersByUser(user_id);
+    }
+    
 
     /**
      * GET /api/purchases/item/{item_id}

@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.backend.shopd.data.entity.OrderEntity;
 import com.backend.shopd.data.entity.ShopdItem;
 import com.backend.shopd.data.entity.UserItemPurchase;
 import com.backend.shopd.data.repository.ShopdItemRepository;
@@ -14,13 +15,14 @@ import com.backend.shopd.data.repository.UserItemPurchaseRepository;
 @Service
 public class PurchaseService {
 
+    private final OrderService orderService;
     private final UserItemPurchaseRepository purchaseRepository;
     private final ShopdItemRepository shopdItemRepository;
 
-    public PurchaseService(UserItemPurchaseRepository purchaseRepository,
-                           ShopdItemRepository shopdItemRepository) {
+    public PurchaseService(UserItemPurchaseRepository purchaseRepository, ShopdItemRepository shopdItemRepository, OrderService orderService) {
         this.purchaseRepository = purchaseRepository;
         this.shopdItemRepository = shopdItemRepository;
+        this.orderService = orderService;
     }
 
     /**
@@ -52,8 +54,14 @@ public class PurchaseService {
         return purchaseRepository.save(purchase);
     }
 
+    public List<OrderEntity> getOrdersByUser(UUID userId) {
+        System.out.println("Fetching orders for user: " + userId);
+        return orderService.getOrdersByUser(userId);
+    }
+
     // Purchase history for a user, newest first
     public List<UserItemPurchase> getPurchasesByUser(UUID userId) {
+        System.out.println("Fetching purchases for user: " + userId);
         return purchaseRepository.findByUserIdOrderByPurchasedAtDesc(userId);
     }
 

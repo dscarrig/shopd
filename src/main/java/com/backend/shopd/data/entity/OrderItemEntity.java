@@ -18,10 +18,16 @@ public class OrderItemEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_item_id", updatable = false, nullable = false)
-    private UUID orderItemId;
+    private UUID id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "item_id", nullable = false)
     private UUID itemId;
+
+    @Column(name = "price", nullable = false)
+    private double price;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
