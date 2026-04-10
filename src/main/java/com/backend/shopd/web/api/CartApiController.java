@@ -2,6 +2,7 @@ package com.backend.shopd.web.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class CartApiController {
     public ResponseEntity<ShopdItem> addItemToCart(@PathVariable String user_id, @RequestBody String itemId)
 	{
         try {
-            java.util.UUID uuid = java.util.UUID.fromString(itemId);
+            UUID uuid = UUID.fromString(itemId);
             
             shopdItemRepository.findById(uuid)
                     .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
@@ -81,7 +82,7 @@ public class CartApiController {
 		{
 			for (int i = 0; i < itemIds.size(); i++)
 			{
-				result.add(shopdItemRepository.findById(java.util.UUID.fromString(itemIds.get(i).toString())).get());
+				result.add(shopdItemRepository.findById(UUID.fromString(itemIds.get(i).toString())).get());
 			}
 		}
 		return result;
@@ -91,7 +92,7 @@ public class CartApiController {
     public ResponseEntity<ShopdItem> removeCartItem(@PathVariable String user_id, @PathVariable String item_id)
 	{
         try {
-            shopdItemRepository.findById(java.util.UUID.fromString(item_id))
+            shopdItemRepository.findById(UUID.fromString(item_id))
                 .orElseThrow(() -> new RuntimeException("Item not found with id: " + item_id));
         } catch (Exception e) {
             return new ResponseEntity<ShopdItem>(HttpStatus.NOT_FOUND);

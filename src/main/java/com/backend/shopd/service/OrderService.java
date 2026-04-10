@@ -24,5 +24,10 @@ public class OrderService {
     public List<OrderEntity> getOrdersByUser(UUID userId) {
         return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
     }
+
+    public OrderEntity getOrderById(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+    }
     
 }
