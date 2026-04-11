@@ -116,6 +116,11 @@ public class OrderApiController {
         return orderService.getOrdersByUser(user_id);
     }
 
+    @GetMapping("/user-id/{order_item_id}")
+    public UUID getUserIdByOrderItemId(@PathVariable UUID order_item_id) {
+        return orderService.getUserIdByOrderItemId(order_item_id);
+    }
+
     /**
      * GET /api/orders/item/{item_id}
      * Returns all orders containing a specific item.

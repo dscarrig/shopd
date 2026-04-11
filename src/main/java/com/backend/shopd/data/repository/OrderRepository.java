@@ -1,6 +1,7 @@
 package com.backend.shopd.data.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
 
     @Query("SELECT i FROM OrderEntity o JOIN o.items i WHERE i.itemId IN (SELECT s.id FROM ShopdItem s WHERE s.userId = :userId)")
     List<OrderItemEntity> findOrderItemsByShopdItemUserId(@Param("userId") UUID userId);
+
+    @Query("SELECT o FROM OrderEntity o JOIN o.items i WHERE i.id = :orderItemId")
+    Optional<OrderEntity> findByOrderItemId(@Param("orderItemId") UUID orderItemId);
 }

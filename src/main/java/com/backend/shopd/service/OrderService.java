@@ -143,4 +143,10 @@ public class OrderService {
         orderItem.setStatus(status);
         orderItemRepository.save(orderItem);
     }
+
+    public UUID getUserIdByOrderItemId(UUID order_item_id) {
+        OrderEntity order = orderRepository.findByOrderItemId(order_item_id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found for OrderItem: " + order_item_id));
+        return order.getUserId();
+    }
 }

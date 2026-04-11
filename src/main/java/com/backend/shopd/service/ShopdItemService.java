@@ -57,4 +57,10 @@ public class ShopdItemService {
     public List<ShopdItem> getItemsByCategory(String[] categories) {
         return shopdItemRepository.findByCategoryIn(categories);
     }
+
+    public UUID getUserIdByItemId(UUID id) {
+        ShopdItem item = shopdItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
+        return item.getUserId();
+    }
 }

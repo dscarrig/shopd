@@ -62,6 +62,11 @@ public class ShopdItemApiController {
         return shopdItemService.getItemById(id);
     }
 
+    @GetMapping("/user-id/{id}")
+    public UUID getUserIdByItemId(@PathVariable UUID id){
+        return shopdItemService.getUserIdByItemId(id);
+    }
+
     @PostMapping("/create-item/{user_id}")
     public ShopdItem createItem(@PathVariable UUID user_id, @RequestBody ShopdItem item){
         logger.info("Creating item '{}' for user: {}", item.getName(), user_id);
@@ -72,13 +77,11 @@ public class ShopdItemApiController {
 
     @PutMapping("update-item/{id}")
     public ShopdItem updateItem(@PathVariable UUID id, @RequestBody ShopdItem item){
-        System.out.println("Updating item with ID: " + id);
         return shopdItemService.updateItem(id, item);
     }
 
     @DeleteMapping("/{user_id}/{id}")
     public void deleteItem(@PathVariable UUID user_id, @PathVariable UUID id){
-
         shopdItemService.deleteItem(id);
     }
 
