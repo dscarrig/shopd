@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.backend.shopd.data.entity.OrderEntity;
 import com.backend.shopd.data.entity.OrderItemEntity;
-
+import com.backend.shopd.data.entity.ShopdItem;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
 

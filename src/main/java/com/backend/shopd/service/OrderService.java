@@ -10,16 +10,19 @@ import com.backend.shopd.data.entity.OrderEntity;
 import com.backend.shopd.data.entity.OrderItemEntity;
 import com.backend.shopd.data.entity.ShopdItem;
 import com.backend.shopd.data.repository.OrderRepository;
+import com.backend.shopd.data.repository.OrderItemRepository;
 import com.backend.shopd.data.repository.ShopdItemRepository;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ShopdItemRepository shopdItemRepository;
 
-    public OrderService(OrderRepository orderRepository, ShopdItemRepository shopdItemRepository) {
+    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ShopdItemRepository shopdItemRepository) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.shopdItemRepository = shopdItemRepository;
     }
 
@@ -119,5 +122,25 @@ public class OrderService {
 
     public List<OrderItemEntity> getOrderItemsByUser(UUID userId) {
         return orderRepository.findOrderItemsByShopdItemUserId(userId);
+    }
+
+    public ShopdItem getShopdItemByOrderItemId(UUID orderItemId) {
+        return shopdItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new IllegalArgumentException("ShopdItem not found for OrderItem: " + orderItemId));
+    }
+
+    public void updateOrderStatus(UUID order_id, String status) {
+        OrderEntity order = orderRepository.findById(order_id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + order_id));
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void updateOrderItemStatus(UUID orderItemId, String status) {
+        OrderItemEntity orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found: " + orderItemId));
+        orderItem.setStatus(status);
+        orderItemRepository.save(orderItem);
     }
 }

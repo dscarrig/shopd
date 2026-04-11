@@ -1,6 +1,7 @@
 package com.backend.shopd.web.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.shopd.data.entity.OrderEntity;
 import com.backend.shopd.data.entity.OrderItemEntity;
+import com.backend.shopd.data.entity.ShopdItem;
 import com.backend.shopd.service.OrderService;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -42,6 +46,34 @@ public class OrderApiController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @PutMapping("/status/{order_id}")
+    public ResponseEntity<String> updateOrderStatus(@PathVariable UUID order_id, @RequestBody Map<String, String> body) {
+        try {
+            String status = body.get("status");
+            if (status == null || status.isBlank()) {
+                return ResponseEntity.badRequest().body("Missing 'status' field.");
+            }
+            orderService.updateOrderStatus(order_id, status);
+            return ResponseEntity.ok("Order status updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/item/status/{order_id}")
+    public ResponseEntity<Void> updateOrderItemStatus(@PathVariable UUID order_id, @RequestBody Map<String, String> body) {
+        try {
+            String status = body.get("status");
+            if (status == null || status.isBlank()) {
+                return ResponseEntity.badRequest().build();
+            }
+            orderService.updateOrderItemStatus(order_id, status);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -143,7 +175,17 @@ public class OrderApiController {
      */
     @GetMapping("/user/order-listings/{user_id}")
     public List<OrderItemEntity> getOrderItemsByUser(@PathVariable UUID user_id) {
-        System.out.println("--------------------------------------------Fetching order items for user: " + user_id);
         return orderService.getOrderItemsByUser(user_id);
+    }
+
+    @GetMapping("/order-item/shopd-item/{order_item_id}")
+    public ShopdItem getShopdItemByOrderItemId(@PathVariable UUID order_item_id) {
+        return orderService.getShopdItemByOrderItemId(order_item_id);
+    }
+
+    public ShopdItem[] getShopdItemsForOrderItems(List<OrderItemEntity> orderItems) {
+        return orderItems.stream()
+                .map(item -> orderService.getShopdItemByOrderItemId(item.getItemId()))
+                .toArray(ShopdItem[]::new);
     }
 }
