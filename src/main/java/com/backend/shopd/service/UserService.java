@@ -99,12 +99,12 @@ public class UserService {
                 .orElseGet(() -> {
                     AddressEntity newAddress = new AddressEntity();
                     newAddress.setUser(user);
-                    newAddress.setFullName("Default Name");
-                    newAddress.setStreet("Default Street");
-                    newAddress.setCity("Default City");
-                    newAddress.setState("Default State");
-                    newAddress.setZipCode("00000");
-                    newAddress.setCountry("Default Country");
+                    newAddress.setFullName("");
+                    newAddress.setStreet("");
+                    newAddress.setCity("");
+                    newAddress.setState("");
+                    newAddress.setZipCode("");
+                    newAddress.setCountry("");
                     newAddress.setIsDefault(true);
                     return newAddress;
                 });

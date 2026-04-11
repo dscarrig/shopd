@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,6 +25,9 @@ import com.backend.shopd.jwt.JwtUnAuthorizedResponseAuthenticationEntryPoint;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class JWTWebSecurityConfig {
+	@Autowired
+	private CorsConfigurationSource corsConfigurationSource;
+
     @Autowired
 	private JwtUnAuthorizedResponseAuthenticationEntryPoint jwtUnAuthorizedResponseAuthenticationEntryPoint;
 
@@ -48,7 +52,7 @@ public class JWTWebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception
 	{
-		httpSecurity.cors(cors -> cors.configure(httpSecurity))
+		httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource))
 				.csrf(AbstractHttpConfigurer::disable)
 				.exceptionHandling(exception -> exception
 						.authenticationEntryPoint(jwtUnAuthorizedResponseAuthenticationEntryPoint))

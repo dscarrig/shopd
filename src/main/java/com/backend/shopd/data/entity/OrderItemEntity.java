@@ -1,6 +1,9 @@
 package com.backend.shopd.data.entity;
 
 import java.util.UUID;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,4 +34,11 @@ public class OrderItemEntity {
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    @Column(name = "status", nullable = false, length = 50)
+        private String status;
+    
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }
