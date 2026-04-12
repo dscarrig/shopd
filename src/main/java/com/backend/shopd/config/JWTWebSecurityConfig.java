@@ -71,6 +71,8 @@ public class JWTWebSecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/items").permitAll()
 						.requestMatchers(HttpMethod.POST, "/users/new/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/users/exists/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/users/user-id/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/users/username/**").permitAll()
 						.requestMatchers("/error").permitAll()
 						.anyRequest().authenticated())
 				.headers(headers -> headers

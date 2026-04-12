@@ -7,6 +7,7 @@ public class JwtTokenRequest implements Serializable
 
 	private static final long serialVersionUID = -5616176897013108345L;
 
+	private String email;
 	private String username;
 	private String password;
 
@@ -15,10 +16,21 @@ public class JwtTokenRequest implements Serializable
 		super();
 	}
 
-	public JwtTokenRequest(String username, String password)
+	public JwtTokenRequest(String email, String username, String password)
 	{
+		this.setEmail(email);
 		this.setUsername(username);
 		this.setPassword(password);
+	}
+
+	public String getEmail()
+	{
+		return this.email;
+	}
+
+	public void setEmail(String email)
+	{
+		this.email = email;
 	}
 
 	public String getUsername()

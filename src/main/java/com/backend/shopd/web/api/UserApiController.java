@@ -41,8 +41,8 @@ public class UserApiController {
     }
 
     @GetMapping("/user-id/{username}")
-    public UUID getUserIdByUsername(@PathVariable String username){
-        UUID userId = userService.getUserIdByUsername(username);
+    public UUID getUserIdByUsernameOrEmail(@PathVariable String username){
+        UUID userId = userService.getUserIdByUsernameOrEmail(username);
         return userId;
     }
 

@@ -42,9 +42,9 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
 
 		// Skip JWT processing for public endpoints
 		String requestPath = request.getRequestURI();
-		if (requestPath.equals("/register") || requestPath.equals("/authenticate") || 
+		if (requestPath.equals("/register") || requestPath.equals("/authenticate") ||
 		    requestPath.startsWith("/users/new/") || requestPath.startsWith("/users/exists/") ||
-		    requestPath.equals("/") || requestPath.equals("/login") || requestPath.equals("/index") || 
+		    requestPath.equals("/") || requestPath.equals("/login") || requestPath.equals("/index") ||
 		    requestPath.equals("/create-user") || requestPath.equals("/items") || requestPath.equals("/api/items")) {
 			chain.doFilter(request, response);
 			return;
@@ -74,6 +74,7 @@ public class JwtTokenAuthorizationOncePerRequestFilter extends OncePerRequestFil
 			logger.warn("JWT_TOKEN_DOES_NOT_BEGIN_WITH_BEARER_STRING");
 		}
 		logger.debug("JWT_TOKEN_USERNAME_VALUE '{}'", username);
+
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null)
 		{
 

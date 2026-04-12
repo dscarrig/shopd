@@ -39,12 +39,13 @@ public class OrderApiController {
      */
     @PostMapping("/create")
     public ResponseEntity<OrderEntity> createOrder(@RequestBody OrderEntity entity) {
-        System.out.println("Received order creation request: " + entity);
+        System.out.println("--Received order creation request: " + entity);
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(entity));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (IllegalStateException e) {
+            System.out.println("--Order creation conflict: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

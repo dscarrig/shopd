@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByUsername(String username);
 
+    Optional<UserEntity> findByEmail(String email);
+
     @Query("SELECT DISTINCT u FROM UserEntity u WHERE u.id IN (SELECT s.userId FROM ShopdItem s)")
     List<UserEntity> findAllUsersWithListings();
 

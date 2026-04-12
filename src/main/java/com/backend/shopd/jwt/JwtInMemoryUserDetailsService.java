@@ -70,7 +70,7 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		initialized = true;
     }
 
-    public JwtUserDetails addUser(String username, String password)
+    public JwtUserDetails addUser(String email, String username, String password)
 	{
 		if(!initialized)
 			initialize();
@@ -84,7 +84,7 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 			UserEntity user = new UserEntity();
 			user.setUsername(username);
 			user.setPassword(password);
-			user.setEmail(username + "@shopd.local"); // Default email if not provided
+			user.setEmail(email); // Use provided email
 			user.setAccountType("USER"); // Set default account type
 			userRepository.save(user);
 			userCount++;
@@ -102,6 +102,18 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		
 		Optional<JwtUserDetails> findFirst = inMemoryUserList.stream()
 				.filter(user -> user.getUsername().equals(username)).findFirst();
+
+		if (!findFirst.isPresent())
+		{
+			// Fall back: treat the input as an email and resolve to a username
+			Optional<UserEntity> userByEmail = userRepository.findByEmail(username);
+			if (userByEmail.isPresent())
+			{
+				String resolvedUsername = userByEmail.get().getUsername();
+				findFirst = inMemoryUserList.stream()
+						.filter(user -> user.getUsername().equals(resolvedUsername)).findFirst();
+			}
+		}
 
 		if (!findFirst.isPresent())
 		{
@@ -136,6 +148,23 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 				.filter(user -> user.getUsername().equals(username)).findFirst();
 
 		return findFirst.isPresent();
+	}
+
+    public String resolveToUsername(String usernameOrEmail)
+	{
+		if (!initialized)
+			initialize();
+
+		// Return as-is if it already matches a username in memory
+		boolean isUsername = inMemoryUserList.stream()
+				.anyMatch(user -> user.getUsername().equals(usernameOrEmail));
+		if (isUsername)
+			return usernameOrEmail;
+
+		// Try resolving via email lookup
+		return userRepository.findByEmail(usernameOrEmail)
+				.map(UserEntity::getUsername)
+				.orElse(usernameOrEmail);
 	}
     
 }

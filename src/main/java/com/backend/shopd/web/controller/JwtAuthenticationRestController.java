@@ -55,10 +55,13 @@ public class JwtAuthenticationRestController
 		System.out.println("JwtAuthenticationRestController - createAuthenticationToken for: "
 				+ authenticationRequest.getUsername());
 
-		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+		String resolvedUsername = jwtInMemoryUserDetailsService.resolveToUsername(authenticationRequest.getUsername());
+		System.out.println("JwtAuthenticationRestController - resolved username: " + resolvedUsername);
+
+		authenticate(resolvedUsername, authenticationRequest.getPassword());
 
 		final UserDetails userDetails = jwtInMemoryUserDetailsService
-				.loadUserByUsername(authenticationRequest.getUsername());
+				.loadUserByUsername(resolvedUsername);
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 
@@ -102,7 +105,7 @@ public class JwtAuthenticationRestController
 		String hashedPassword = passwordEncoder.encode(registrationRequest.getPassword());
 
 		// Add user to the system
-		jwtInMemoryUserDetailsService.addUser(registrationRequest.getUsername(), hashedPassword);
+		jwtInMemoryUserDetailsService.addUser(registrationRequest.getEmail(), registrationRequest.getUsername(), hashedPassword);
 
 		System.out.println("JwtAuthenticationRestController - user registered successfully: "
 				+ registrationRequest.getUsername());

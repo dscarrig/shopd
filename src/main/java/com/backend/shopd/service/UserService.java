@@ -38,9 +38,10 @@ public class UserService {
         return user;
     }
 
-    public UUID getUserIdByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+    public UUID getUserIdByUsernameOrEmail(String usernameOrEmail) {
+        UserEntity user = userRepository.findByUsername(usernameOrEmail)
+                .or(() -> userRepository.findByEmail(usernameOrEmail))
+                .orElseThrow(() -> new RuntimeException("User not found with username or email: " + usernameOrEmail));
         return user.getId();
     }
 
