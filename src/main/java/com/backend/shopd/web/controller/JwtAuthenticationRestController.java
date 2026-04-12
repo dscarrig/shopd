@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.backend.shopd.data.entity.UserEntity;
+import com.backend.shopd.data.repository.UserRepository;
 import com.backend.shopd.jwt.JwtInMemoryUserDetailsService;
 import com.backend.shopd.jwt.JwtTokenUtil;
 import com.backend.shopd.jwt.JwtUserDetails;
@@ -48,6 +54,9 @@ public class JwtAuthenticationRestController
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@RequestMapping(value = "${jwt.get.token.uri}", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtTokenRequest authenticationRequest)
@@ -143,5 +152,17 @@ public class JwtAuthenticationRestController
 			System.out.println("JwtAuthenticationRestController - authenticate failed - bad credentials: " + username);
 			throw new AuthenticationException("INVALID_CREDENTIALS", e);
 		}
+	}
+
+	@GetMapping("/verify")
+	public ResponseEntity<?> verifyAccount(@RequestParam String code) {
+		UserEntity user = userRepository.findByVerificationCode(code)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid code"));
+	
+		user.setVerified(true);
+		user.setVerificationCode(null);
+		userRepository.save(user);
+	
+		return ResponseEntity.ok("Account verified");
 	}
 }

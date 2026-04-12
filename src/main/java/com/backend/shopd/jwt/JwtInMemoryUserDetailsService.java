@@ -3,6 +3,7 @@ package com.backend.shopd.jwt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,17 @@ import org.springframework.stereotype.Service;
 
 import com.backend.shopd.data.entity.UserEntity;
 import com.backend.shopd.data.repository.UserRepository;
+import com.backend.shopd.service.EmailService;
+import org.springframework.security.authentication.DisabledException;
 
 @Service
 public class JwtInMemoryUserDetailsService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+
+	@Autowired
+	private EmailService emailService;
 
     private List<JwtUserDetails> inMemoryUserList = new ArrayList<>();
 
@@ -56,6 +62,7 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 			tempUserEntity.setPassword("$2a$10$KDLLS2LR6CN70N41MNRvLuE1pYytVd7S3Wf1qFYC8ToS71KLwHrhi");
 			tempUserEntity.setEmail("temp@shopd.local");
 			tempUserEntity.setAccountType("TEMP");
+			tempUserEntity.setVerified(true);
 			userRepository.save(tempUserEntity);
 			System.out.println("Saved temp user to repository");
 		}
@@ -70,29 +77,24 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		initialized = true;
     }
 
-    public JwtUserDetails addUser(String email, String username, String password)
-	{
-		if(!initialized)
-			initialize();
-		
-		JwtUserDetails newUser = new JwtUserDetails(userCount, username, password, "ROLE_USER");
-
-		if (!username.contentEquals(""))
-		{
-			inMemoryUserList.add(newUser);
-			// Create User entity without manual ID - let Hibernate auto-generate it
-			UserEntity user = new UserEntity();
-			user.setUsername(username);
-			user.setPassword(password);
-			user.setEmail(email); // Use provided email
-			user.setAccountType("USER"); // Set default account type
-			userRepository.save(user);
-			userCount++;
-		} else
-			System.out.println("Did not create new user");
-
-		return newUser;
+	public void addUser(String email, String username, String password) {
+		String code = UUID.randomUUID().toString();
+	
+		UserEntity user = new UserEntity();
+		user.setEmail(email);
+		user.setUsername(username);
+		user.setPassword(password);
+		user.setAccountType("USER");
+		user.setVerified(false);
+		user.setVerificationCode(code);
+		userRepository.save(user);
+	
+		// Also add to in-memory list
+		inMemoryUserList.add(new JwtUserDetails(userCount++, username, password, "ROLE_USER"));
+	
+		emailService.sendVerificationEmail(email, code);
 	}
+
 
     @Override
 	public JwtUserDetails loadUserByUsername(String username) throws UsernameNotFoundException
@@ -118,6 +120,12 @@ public class JwtInMemoryUserDetailsService implements UserDetailsService {
 		if (!findFirst.isPresent())
 		{
 			throw new UsernameNotFoundException(String.format("USER_NOT_FOUND '%s'.", username));
+		}
+
+		// Block login for unverified users
+		Optional<UserEntity> dbUser = userRepository.findByUsername(findFirst.get().getUsername());
+		if (dbUser.isPresent() && !dbUser.get().isVerified()) {
+			throw new DisabledException(String.format("USER_NOT_VERIFIED '%s'.", findFirst.get().getUsername()));
 		}
 
 		return findFirst.get();

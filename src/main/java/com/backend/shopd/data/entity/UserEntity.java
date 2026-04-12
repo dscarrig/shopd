@@ -22,21 +22,34 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID id;
+    
     @Column(name = "username", nullable = false, unique = true)
     private String username;
+
     @Column(name = "password", nullable = false)
     private String password;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "account_type", nullable = false)
     private String accountType;
+
     @Column(name = "payment_info", nullable = true, columnDefinition = "TEXT")
     @JdbcType(VarcharJdbcType.class)
     private List<String> paymentInfo;
+
     @Column(name = "default_payment", nullable = true)
     private String defaultPayment;
+
     @Column(name = "phone_number", nullable = true)
     private String phoneNumber;
+
+    @Column(name = "verified", nullable = false)
+    private boolean verified = false;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
 
     public String getUsername() {
         return username;

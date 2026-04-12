@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     @Query("SELECT DISTINCT u FROM UserEntity u WHERE u.id IN (SELECT s.userId FROM ShopdItem s)")
     List<UserEntity> findAllUsersWithListings();
 
+    Optional<UserEntity> findByVerificationCode(String verificationCode);
+
 }
