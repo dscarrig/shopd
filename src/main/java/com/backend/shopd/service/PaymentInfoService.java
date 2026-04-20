@@ -128,7 +128,6 @@ public class PaymentInfoService {
      */
     @Transactional
     public void setDefaultPaymentInfo(String userId, String paymentId) {
-        System.out.println("Setting default payment info for user ID: " + userId + " with payment ID: " + paymentId);
         // Get all payment methods for the user
         java.util.List<PaymentInfoEntity> userPayments = paymentInfoRepository.findByUserId(userId);
         
