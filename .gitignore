@@ -1,5 +1,6 @@
 database.md
 HELP.md
+aws-access.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

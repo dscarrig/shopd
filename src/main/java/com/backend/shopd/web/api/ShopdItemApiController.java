@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.shopd.data.entity.ShopdItem;
+import com.backend.shopd.service.AwsService;
 import com.backend.shopd.service.GoogleCloudStorageService;
 import com.backend.shopd.service.ShopdItemService;
 
@@ -33,13 +34,13 @@ import jakarta.servlet.http.HttpServletRequest;
 public class ShopdItemApiController {
     private static final Logger logger = LoggerFactory.getLogger(ShopdItemApiController.class);
     private final ShopdItemService shopdItemService;
-    private final GoogleCloudStorageService gcsService;
+    private final AwsService storageService;
 
     public ShopdItemApiController(
             ShopdItemService shopdItemService,
-            GoogleCloudStorageService gcsService) {
+            AwsService storageService) {
         this.shopdItemService = shopdItemService;
-        this.gcsService = gcsService;
+        this.storageService = storageService;
     }
 
     @GetMapping
@@ -107,9 +108,9 @@ public class ShopdItemApiController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
             }
 
-            // Upload to Google Cloud Storage
-            String blobName = gcsService.uploadFile(file, "items");
-            String imageUrl = gcsService.getPublicUrl(blobName);
+            // Upload to AWS S3
+            String blobName = storageService.uploadFile(file, "items");
+            String imageUrl = storageService.getPublicUrl(blobName);
             
             // Update item with image URL
             item.setImageUrl(imageUrl);
@@ -148,8 +149,8 @@ public class ShopdItemApiController {
             // Construct the blob name (assuming files are in "items" folder)
             String blobName = "items/" + filename;
             
-            // Download from Google Cloud Storage
-            byte[] fileContent = gcsService.downloadFile(blobName);
+            // Download from AWS S3
+            byte[] fileContent = storageService.downloadFile(blobName);
             
             // Determine content type
             String contentType = request.getServletContext().getMimeType(filename);
@@ -168,17 +169,4 @@ public class ShopdItemApiController {
         }
     }
 
-    /**
-     * Extract filename from a full URL
-     */
-    private String extractFilenameFromUrl(String url) {
-        if (url == null || url.isEmpty()) {
-            return null;
-        }
-        int lastSlashIndex = url.lastIndexOf('/');
-        if (lastSlashIndex != -1 && lastSlashIndex < url.length() - 1) {
-            return url.substring(lastSlashIndex + 1);
-        }
-        return url;
-    }
 }
