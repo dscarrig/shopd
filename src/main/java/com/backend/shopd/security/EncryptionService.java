@@ -15,7 +15,7 @@ public class EncryptionService {
 
     private static final String ALGORITHM = "AES";
     
-    @Value("${encryption.secret.key:MySecretEncryptionKey123456}")
+    @Value("${encryption.secret.key}")
     private String secretKey;
 
     /**

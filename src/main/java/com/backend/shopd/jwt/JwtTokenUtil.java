@@ -1,18 +1,23 @@
 package com.backend.shopd.jwt;
 
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.crypto.SecretKey;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenUtil implements Serializable {
@@ -22,9 +27,43 @@ public class JwtTokenUtil implements Serializable {
 	private static final long serialVersionUID = -3301605591108950415L;
 
 	private final JwtConfigurationProperties jwtConfig;
+	private PrivateKey privateKey;
+	private PublicKey publicKey;
 
 	public JwtTokenUtil(JwtConfigurationProperties jwtConfig) {
 		this.jwtConfig = jwtConfig;
+		loadKeys();
+	}
+
+	private void loadKeys() {
+		try {
+			String privatePath = jwtConfig.getSigning().getKey().getPrivateKeyPath();
+			String publicPath = jwtConfig.getSigning().getKey().getPublicKeyPath();
+			privateKey = loadPrivateKey(privatePath);
+			publicKey = loadPublicKey(publicPath);
+		} catch (Exception e) {
+			throw new IllegalStateException("Failed to load JWT RSA keys from PEM files", e);
+		}
+	}
+
+	private PrivateKey loadPrivateKey(String path) throws Exception {
+		String pem = new String(Files.readAllBytes(Paths.get(path)));
+		String keyContent = pem
+				.replace("-----BEGIN PRIVATE KEY-----", "")
+				.replace("-----END PRIVATE KEY-----", "")
+				.replaceAll("\\s", "");
+		byte[] keyBytes = Base64.getDecoder().decode(keyContent);
+		return KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
+	}
+
+	private PublicKey loadPublicKey(String path) throws Exception {
+		String pem = new String(Files.readAllBytes(Paths.get(path)));
+		String keyContent = pem
+				.replace("-----BEGIN PUBLIC KEY-----", "")
+				.replace("-----END PUBLIC KEY-----", "")
+				.replaceAll("\\s", "");
+		byte[] keyBytes = Base64.getDecoder().decode(keyContent);
+		return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
 	}
 
 	public String getUsernameFromToken(String token)
@@ -50,9 +89,8 @@ public class JwtTokenUtil implements Serializable {
 
 	private Claims getAllClaimsFromToken(String token)
 	{
-		SecretKey key = Keys.hmacShaKeyFor(jwtConfig.getSigning().getKey().getSecret().getBytes());
 		return Jwts.parser()
-				.verifyWith(key)
+				.verifyWith(publicKey)
 				.build()
 				.parseSignedClaims(token)
 				.getPayload();
@@ -81,13 +119,12 @@ public class JwtTokenUtil implements Serializable {
 		final Date createdDate = new Date();
 		final Date expirationDate = calculateExpirationDate(createdDate);
 
-		SecretKey key = Keys.hmacShaKeyFor(jwtConfig.getSigning().getKey().getSecret().getBytes());
 		return Jwts.builder()
 				.claims(claims)
 				.subject(subject)
 				.issuedAt(createdDate)
 				.expiration(expirationDate)
-				.signWith(key)
+				.signWith(privateKey)
 				.compact();
 	}
 
@@ -102,13 +139,12 @@ public class JwtTokenUtil implements Serializable {
 		final Date expirationDate = calculateExpirationDate(createdDate);
 
 		final Claims claims = getAllClaimsFromToken(token);
-		
-		SecretKey key = Keys.hmacShaKeyFor(jwtConfig.getSigning().getKey().getSecret().getBytes());
+
 		return Jwts.builder()
 				.claims(claims)
 				.issuedAt(createdDate)
 				.expiration(expirationDate)
-				.signWith(key)
+				.signWith(privateKey)
 				.compact();
 	}
 
@@ -125,3 +161,4 @@ public class JwtTokenUtil implements Serializable {
 	}
     
 }
+

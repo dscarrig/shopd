@@ -1,5 +1,6 @@
 package com.backend.shopd.web.controller;
 
+import com.backend.shopd.service.AwsService;
 import com.backend.shopd.service.GoogleCloudStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,11 @@ import java.util.Map;
 @Slf4j
 public class StorageController {
     
-    private final GoogleCloudStorageService gcsService;
+    private final AwsService storageService;
+    // private final GoogleCloudStorageService storageService;
     
     /**
-     * Upload a file to Google Cloud Storage
+     * Upload a file to AWS S3
      * POST /api/storage/upload
      */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -32,8 +34,8 @@ public class StorageController {
             @RequestParam(value = "folder", required = false, defaultValue = "images") String folder) {
         
         try {
-            String blobName = gcsService.uploadFile(file, folder);
-            String publicUrl = gcsService.getPublicUrl(blobName);
+            String blobName = storageService.uploadFile(file, folder);
+            String publicUrl = storageService.getPublicUrl(blobName);
             
             Map<String, String> response = new HashMap<>();
             response.put("blobName", blobName);
@@ -60,7 +62,7 @@ public class StorageController {
             @RequestParam(value = "duration", defaultValue = "60") long durationMinutes) {
         
         try {
-            String signedUrl = gcsService.generateSignedUrl(blobName, durationMinutes);
+            String signedUrl = storageService.generateSignedUrl(blobName, durationMinutes);
             
             Map<String, String> response = new HashMap<>();
             response.put("signedUrl", signedUrl);
@@ -83,7 +85,7 @@ public class StorageController {
     @GetMapping("/download/{blobName}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable String blobName) {
         try {
-            byte[] fileContent = gcsService.downloadFile(blobName);
+            byte[] fileContent = storageService.downloadFile(blobName);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=\"" + blobName + "\"")
@@ -104,7 +106,7 @@ public class StorageController {
             @RequestParam(value = "folder", required = false) String folder) {
         
         try {
-            List<String> files = gcsService.listFiles(folder);
+            List<String> files = storageService.listFiles(folder);
             
             Map<String, Object> response = new HashMap<>();
             response.put("files", files);
@@ -121,13 +123,13 @@ public class StorageController {
     }
     
     /**
-     * Delete a file from Google Cloud Storage
+     * Delete a file from AWS S3
      * DELETE /api/storage/{blobName}
      */
     @DeleteMapping("/{blobName}")
     public ResponseEntity<Map<String, String>> deleteFile(@PathVariable String blobName) {
         try {
-            boolean deleted = gcsService.deleteFile(blobName);
+            boolean deleted = storageService.deleteFile(blobName);
             
             Map<String, String> response = new HashMap<>();
             if (deleted) {
@@ -152,7 +154,7 @@ public class StorageController {
      */
     @GetMapping("/exists/{blobName}")
     public ResponseEntity<Map<String, Boolean>> fileExists(@PathVariable String blobName) {
-        boolean exists = gcsService.fileExists(blobName);
+        boolean exists = storageService.fileExists(blobName);
         Map<String, Boolean> response = new HashMap<>();
         response.put("exists", exists);
         return ResponseEntity.ok(response);

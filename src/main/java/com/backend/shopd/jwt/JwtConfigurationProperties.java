@@ -55,7 +55,7 @@ public class JwtConfigurationProperties {
     
     public static class Signing {
         private Key key = new Key();
-        
+
         public Key getKey() {
             return key;
         }
@@ -65,14 +65,23 @@ public class JwtConfigurationProperties {
         }
         
         public static class Key {
-            private String secret;
-            
-            public String getSecret() {
-                return secret;
+            private String privateKeyPath;
+            private String publicKeyPath;
+
+            public String getPrivateKeyPath() {
+                return privateKeyPath;
             }
-            
-            public void setSecret(String secret) {
-                this.secret = secret;
+
+            public void setPrivateKeyPath(String privateKeyPath) {
+                this.privateKeyPath = privateKeyPath;
+            }
+
+            public String getPublicKeyPath() {
+                return publicKeyPath;
+            }
+
+            public void setPublicKeyPath(String publicKeyPath) {
+                this.publicKeyPath = publicKeyPath;
             }
         }
     }

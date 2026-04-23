@@ -1,12 +1,15 @@
 database.md
 HELP.md
 aws-access.md
+.env
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 test-image.png
 GCS_SETUP.md
+keys/
+generate-keys.txt
 
 ### STS ###
 .apt_generated
