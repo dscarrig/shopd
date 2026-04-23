@@ -9,6 +9,7 @@ target/
 test-image.png
 GCS_SETUP.md
 keys/
+generate-keys.txt
 
 ### STS ###
 .apt_generated
