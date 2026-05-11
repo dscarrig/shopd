@@ -10,6 +10,9 @@ test-image.png
 GCS_SETUP.md
 keys/
 generate-keys.txt
+ngrok.md
+setup-db.sh
+cloudflare.md
 
 ### STS ###
 .apt_generated

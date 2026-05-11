@@ -17,14 +17,17 @@ public class MvcConfig implements WebMvcConfigurer {
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList(
             "http://localhost:3000", "http://localhost:3001",
             "http://localhost:4200", "http://localhost:5173",
-            "http://localhost:8081");
+            "http://localhost:8081",
+            "https://d1q2qu43e383df.cloudfront.net",
+            "https://shopd.us",
+            "https://shopd.org");
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(ALLOWED_ORIGINS);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "ngrok-skip-browser-warning"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
@@ -45,7 +48,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(ALLOWED_ORIGINS.toArray(new String[0]))
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                .allowedHeaders("Authorization", "Content-Type", "Accept", "ngrok-skip-browser-warning")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
