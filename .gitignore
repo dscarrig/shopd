@@ -46,3 +46,5 @@ build/
 shopd-gcs-key.json
 *-key.json
 gcp-credentials.json
+
+hello-world/

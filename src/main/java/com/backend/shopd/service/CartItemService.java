@@ -39,6 +39,7 @@ public class CartItemService {
 	
 	public void clearItems(String customer)
 	{
+		System.out.println("Clearing cart for customer: " + customer);
 		customerCarts.put(customer, new ArrayList<String>());
 	}
 	
