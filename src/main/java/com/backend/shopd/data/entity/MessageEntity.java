@@ -2,6 +2,7 @@ package com.backend.shopd.data.entity;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,8 +33,9 @@ public class MessageEntity {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "timestamp", nullable = false)
-    private long timestamp;
+    private Long timestamp;
 
     @Column(name = "read", nullable = false)
     private boolean read;
