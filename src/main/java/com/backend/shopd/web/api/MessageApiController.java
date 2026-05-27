@@ -30,6 +30,16 @@ public class MessageApiController {
         this.messageService = messageService;
     }
 
+    @GetMapping("/by-id/{message_id}")
+    public ResponseEntity<MessageEntity> getMessageById(@PathVariable UUID message_id) {
+        MessageEntity message = messageService.getMessageById(message_id);
+        if (message != null) {
+            return ResponseEntity.ok(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @PostMapping("/send/{sender_user_id}/{receiver_user_id}")
     public ResponseEntity<MessageEntity> sendMessage(
             @PathVariable UUID sender_user_id,

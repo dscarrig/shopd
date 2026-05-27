@@ -19,14 +19,11 @@ public class MessageService {
     }
 
     public List<MessageEntity> getMessagesForUser(UUID receiverUserId) {
-        System.out.println("Fetching messages for user: " + receiverUserId);
         return messageRepository.findByReceiverUserId(receiverUserId);
     }
 
     @Transactional
     public MessageEntity sendMessage(UUID senderUserId, UUID receiverUserId, MessageEntity message) {
-        System.out.println("Sending message from user: " + senderUserId + " to user: " + receiverUserId);
-        System.out.println("Message content: " + message.getContent());
         message.setId(null);
         message.setUserId(senderUserId);
         message.setReceiverUserId(receiverUserId);
@@ -37,7 +34,6 @@ public class MessageService {
 
     @Transactional
     public void deleteMessage(UUID messageId) {
-        System.out.println("Deleting message with ID: " + messageId);
         if (!messageRepository.existsById(messageId)) {
             throw new IllegalArgumentException("Message not found: " + messageId);
         }
@@ -46,7 +42,6 @@ public class MessageService {
 
     @Transactional
     public MessageEntity markAsRead(UUID messageId) {
-        System.out.println("Marking message as read with ID: " + messageId);
         MessageEntity message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new IllegalArgumentException("Message not found: " + messageId));
         message.setRead(true);
@@ -55,7 +50,6 @@ public class MessageService {
 
     @Transactional
     public MessageEntity editMessage(UUID messageId, String subject, String content) {
-        System.out.println("Editing message with ID: " + messageId);
         MessageEntity message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new IllegalArgumentException("Message not found: " + messageId));
         if (subject != null && !subject.isBlank()) {
@@ -65,5 +59,9 @@ public class MessageService {
             message.setContent(content);
         }
         return messageRepository.save(message);
+    }
+
+    public MessageEntity getMessageById(UUID message_id) {
+        return messageRepository.findById(message_id).orElse(null);
     }
 }
