@@ -52,7 +52,7 @@ public class CartApiController {
         }
         
         cartItemService.addItem(user_id, itemId);
-        System.out.println("Added item " + itemId + " to user " + user_id + " cart.");
+
 		return new ResponseEntity<ShopdItem>(HttpStatus.OK);
     }
 
@@ -85,6 +85,7 @@ public class CartApiController {
 				result.add(shopdItemRepository.findById(UUID.fromString(itemIds.get(i).toString())).get());
 			}
 		}
+
 		return result;
 	}
     

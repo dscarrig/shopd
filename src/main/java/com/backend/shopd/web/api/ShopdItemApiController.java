@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.backend.shopd.data.entity.ShopdItem;
 import com.backend.shopd.service.AwsService;
-import com.backend.shopd.service.GoogleCloudStorageService;
 import com.backend.shopd.service.ShopdItemService;
 
 import jakarta.servlet.http.HttpServletRequest;
